@@ -1072,21 +1072,20 @@ async function initApp() {
 }
 
 // Boot sequence
+
 auth.onAuthStateChanged(async (user) => {
   if (user) {
     currentUser = user;
-    await handleRedirectResult();
-    currentUser = auth.currentUser;
+
+    await handleRedirectResult();      // OK because this callback is async
+    currentUser = auth.currentUser;    // refresh after redirect
+
     await initApp();
   } else {
-    // Always start anonymous for immediate usability (then optionally link to Google)
-    try {
-      await auth.signInAnonymously();
-    } catch (e) {
-      console.error("Anonymous sign-in failed:", e);
-    }
+    await auth.signInAnonymously();
   }
 });
+
 </script>
 
 </body>
