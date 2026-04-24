@@ -588,6 +588,14 @@ const db = firebase.firestore();
 const googleProvider = new firebase.auth.GoogleAuthProvider();
 googleProvider.setCustomParameters({ prompt: "select_account" });
 
+async function handleRedirectResult() {
+  try {
+    await auth.getRedirectResult();
+  } catch (e) {
+    console.error("Redirect result error:", e);
+  }
+}
+
 let currentUser = null;
 
 // Firestore persistence (replaces localStorage)
