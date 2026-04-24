@@ -642,15 +642,21 @@ function isSafari() {
   return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 }
 
+function isIOS() {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+}
+
+// For your setup:
+// - iOS Safari: redirect
+// - macOS Safari + other desktop browsers: popup
 async function googleLinkOrSignIn() {
   if (!auth.currentUser) return;
 
   try {
-    const shouldLink =
-      auth.currentUser.isAnonymous && (await hasAnyCloudData());
+    const shouldLink = auth.currentUser.isAnonymous && (await hasAnyCloudData());
 
-    // ✅ Safari: ALWAYS use redirect (popup is unreliable)
-    if (isSafari()) {
+    if (isIOS()) {
+      // iPhone/iPad: redirect is usually smoother
       if (shouldLink) {
         await auth.currentUser.linkWithRedirect(googleProvider);
       } else {
@@ -659,12 +665,15 @@ async function googleLinkOrSignIn() {
       return;
     }
 
-    // ✅ Non‑Safari browsers: popup is fine
+    // Desktop (including macOS Safari): popup is the reliable option here
     if (shouldLink) {
       await auth.currentUser.linkWithPopup(googleProvider);
     } else {
       await auth.signInWithPopup(googleProvider);
     }
+
+    // After popup completes, status should update immediately
+    updateSyncStatus();
   } catch (e) {
     console.error("Google sign-in/link failed:", e);
     alert("Google sign-in failed. Please try again.");
