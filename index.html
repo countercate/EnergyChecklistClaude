@@ -583,6 +583,8 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 const auth = firebase.auth();
+const db = firebase.firestore();
+
 
 async function handleRedirectResult() {
   try {
@@ -591,8 +593,7 @@ async function handleRedirectResult() {
     console.error("Redirect result error:", e);
   }
 }
- const db = firebase.firestore();
-
+ 
 const googleProvider = new firebase.auth.GoogleAuthProvider();
 googleProvider.setCustomParameters({ prompt: "select_account" });
 
