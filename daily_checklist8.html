@@ -589,7 +589,33 @@ body {
 
 <div class="confetti-pop" id="confettiPop">All done for today!<br><span style="font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text-muted)">Great work. Rest well.</span></div>
 
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  
 <script>
+// 🔐 Firebase setup
+const firebaseConfig = {
+  apiKey: "AIzaSyC-1d0tEN5JPDwvBYpW315mT4-eYMMfNuc",
+  authDomain: "energychecklist.firebaseapp.com",
+  projectId: "energychecklist",
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+let currentUser = null;
+
+auth.signInAnonymously().catch(console.error);
+
+auth.onAuthStateChanged(user => {
+  if (user) {
+    currentUser = user;
+  }
+});
+  
 const CHECKLISTS = {
   office: [
     {
@@ -717,11 +743,37 @@ const TAG_LABELS = {
 
 function todayKey() { return new Date().toISOString().split('T')[0]; }
 
-function load(key, fallback) {
-  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch(e) { return fallback; }
+async function load(key, fallback) {
+  if (!currentUser) return fallback;
+
+  try {
+    const doc = await db
+      .collection("users")
+      .doc(currentUser.uid)
+      .collection("data")
+      .doc(key)
+      .get();
+
+    return doc.exists ? doc.data().value : fallback;
+  } catch (e) {
+    console.error("Load failed:", e);
+    return fallback;
+  }
 }
-function save(key, val) {
-  try { localStorage.setItem(key, JSON.stringify(val)); } catch(e) {}
+
+async function save(key, val) {
+  if (!currentUser) return;
+
+  try {
+    await db
+      .collection("users")
+      .doc(currentUser.uid)
+      .collection("data")
+      .doc(key)
+      .set({ value: val });
+  } catch (e) {
+    console.error("Save failed:", e);
+  }
 }
 
 const today = todayKey();
@@ -951,11 +1003,32 @@ function initEnergy() {
   document.getElementById('eNote').value = energyData.note || '';
 }
 
-setDateLine();
-updatePills();
-renderChecklist();
-updateProgress();
-initEnergy();
+async function initApp() {
+  // Load all persisted state
+  dayType = await load('dayType_' + today, detectDayType());
+  checked = await load('checked_' + today, {});
+  energyData = await load('energy_' + today, {
+    energy: 5,
+    mood: 5,
+    sleep: 5,
+    note: ''
+  });
+  allHistory = await load('history_all', []);
+
+  // Now render UI
+  setDateLine();
+  updatePills();
+  renderChecklist();
+  updateProgress();
+  initEnergy();
+}
+
+auth.onAuthStateChanged(user => {
+  if (user) {
+    currentUser = user;
+    initApp();
+  }
+});
 </script>
 </body>
 </html>
