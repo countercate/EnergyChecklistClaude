@@ -1,495 +1,1075 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Daily Checklist</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg: #f7f4ef;
-      --surface: #ffffff;
-      --surface2: #f0ece4;
-      --border: rgba(0,0,0,0.09);
-      --border-med: rgba(0,0,0,0.15);
-      --text: #1c1a16;
-      --text-muted: #7a7670;
-      --text-faint: #b0aca4;
-      --green: #1D9E75;
-      --green-light: #e4f5ee;
-      --green-dark: #0e6e51;
-      --purple: #7F77DD;
-      --purple-light: #eeedf9;
-      --amber: #d4860a;
-      --amber-light: #fdf3e0;
-      --coral: #c85a30;
-      --coral-light: #faeae4;
-      --blue: #2e7dd4;
-      --blue-light: #e6f0fb;
-      --radius: 12px;
-      --radius-sm: 8px;
-      --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
-    }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #141412;
-        --surface: #1e1d1a;
-        --surface2: #252320;
-        --border: rgba(255,255,255,0.08);
-        --border-med: rgba(255,255,255,0.14);
-        --text: #f0ece4;
-        --text-muted: #908c84;
-        --text-faint: #5a5750;
-        --green-light: #0e3324;
-        --purple-light: #1e1c40;
-        --amber-light: #2e1f06;
-        --coral-light: #2a1208;
-        --blue-light: #0d2240;
-      }
-    }
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      padding-bottom: 3rem;
-    }
-    .header {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 1.25rem 1.5rem;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    .header-top {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 1rem;
-      margin-bottom: 1rem;
-    }
-    .header-left h1 {
-      font-family: 'DM Serif Display', serif;
-      font-size: 22px;
-      font-weight: 400;
-      color: var(--text);
-      line-height: 1.2;
-    }
-    .header-left .date-line {
-      font-size: 13px;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
-    .day-badge {
-      font-size: 11px;
-      font-weight: 500;
-      padding: 4px 12px;
-      border-radius: 99px;
-      letter-spacing: 0.04em;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-    .day-badge.office { background: var(--coral-light); color: var(--coral); }
-    .day-badge.home { background: var(--green-light); color: var(--green-dark); }
-    .day-badge.weekend { background: var(--purple-light); color: var(--purple); }
-    .progress-section {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .progress-bar-outer {
-      flex: 1;
-      height: 6px;
-      background: var(--surface2);
-      border-radius: 99px;
-      overflow: hidden;
-    }
-    .progress-bar-inner {
-      height: 100%;
-      border-radius: 99px;
-      background: var(--green);
-      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .progress-text {
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-muted);
-      white-space: nowrap;
-      min-width: 48px;
-      text-align: right;
-    }
-    .main { max-width: 600px; margin: 0 auto; padding: 1.25rem 1rem 0; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Checklist</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+ --bg: #f7f4ef;
+ --surface: #ffffff;
+ --surface2: #f0ece4;
+ --border: rgba(0,0,0,0.09);
+ --border-med: rgba(0,0,0,0.15);
+ --text: #1c1a16;
+ --text-muted: #7a7670;
+ --text-faint: #b0aca4;
+ --green: #1D9E75;
+ --green-light: #e4f5ee;
+ --green-dark: #0e6e51;
+ --purple: #7F77DD;
+ --purple-light: #eeedf9;
+ --amber: #d4860a;
+ --amber-light: #fdf3e0;
+ --coral: #c85a30;
+ --coral-light: #faeae4;
+ --blue: #2e7dd4;
+ --blue-light: #e6f0fb;
+ --radius: 12px;
+ --radius-sm: 8px;
+ --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+}
+@media (prefers-color-scheme: dark) {
+ :root {
+ --bg: #141412;
+ --surface: #1e1d1a;
+ --surface2: #252320;
+ --border: rgba(255,255,255,0.08);
+ --border-med: rgba(255,255,255,0.14);
+ --text: #f0ece4;
+ --text-muted: #908c84;
+ --text-faint: #5a5750;
+ --green-light: #0e3324;
+ --purple-light: #1e1c40;
+ --amber-light: #2e1f06;
+ --coral-light: #2a1208;
+ --blue-light: #0d2240;
+ }
+}
+body {
+ font-family: 'DM Sans', sans-serif;
+ background: var(--bg);
+ color: var(--text);
+ min-height: 100vh;
+ padding-bottom: 3rem;
+}
+.header {
+ background: var(--surface);
+ border-bottom: 1px solid var(--border);
+ padding: 1.25rem 1.5rem;
+ position: sticky;
+ top: 0;
+ z-index: 100;
+}
+.header-top {
+ display: flex;
+ align-items: flex-start;
+ justify-content: space-between;
+ gap: 1rem;
+ margin-bottom: 1rem;
+}
+.header-left h1 {
+ font-family: 'DM Serif Display', serif;
+ font-size: 22px;
+ font-weight: 400;
+ color: var(--text);
+ line-height: 1.2;
+}
+.header-left .date-line {
+ font-size: 13px;
+ color: var(--text-muted);
+ margin-top: 2px;
+}
+.day-badge {
+ font-size: 11px;
+ font-weight: 500;
+ padding: 4px 12px;
+ border-radius: 99px;
+ letter-spacing: 0.04em;
+ white-space: nowrap;
+ flex-shrink: 0;
+}
+.day-badge.office { background: var(--coral-light); color: var(--coral); }
+.day-badge.home { background: var(--green-light); color: var(--green-dark); }
+.day-badge.weekend { background: var(--purple-light); color: var(--purple); }
+.progress-section {
+ display: flex;
+ align-items: center;
+ gap: 12px;
+}
+.progress-bar-outer {
+ flex: 1;
+ height: 6px;
+ background: var(--surface2);
+ border-radius: 99px;
+ overflow: hidden;
+}
+.progress-bar-inner {
+ height: 100%;
+ border-radius: 99px;
+ background: var(--green);
+ transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.progress-text {
+ font-size: 13px;
+ font-weight: 500;
+ color: var(--text-muted);
+ white-space: nowrap;
+ min-width: 48px;
+ text-align: right;
+}
+.main { max-width: 600px; margin: 0 auto; padding: 1.25rem 1rem 0; }
 
-    .day-type-picker { display: flex; gap: 6px; margin-bottom: 1.25rem; }
-    .type-pill {
-      flex: 1;
-      padding: 8px 4px;
-      border-radius: var(--radius-sm);
-      border: 1.5px solid var(--border-med);
-      background: var(--surface);
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--text-muted);
-      cursor: pointer;
-      text-align: center;
-      transition: all 0.15s;
-    }
-    .type-pill.active.office { border-color: var(--coral); background: var(--coral-light); color: var(--coral); }
-    .type-pill.active.home { border-color: var(--green); background: var(--green-light); color: var(--green-dark); }
-    .type-pill.active.weekend { border-color: var(--purple); background: var(--purple-light); color: var(--purple); }
+.day-type-picker {
+ display: flex;
+ gap: 6px;
+ margin-bottom: 1.25rem;
+}
+.type-pill {
+ flex: 1;
+ padding: 8px 4px;
+ border-radius: var(--radius-sm);
+ border: 1.5px solid var(--border-med);
+ background: var(--surface);
+ font-size: 12px;
+ font-weight: 500;
+ color: var(--text-muted);
+ cursor: pointer;
+ text-align: center;
+ transition: all 0.15s;
+}
+.type-pill.active.office { border-color: var(--coral); background: var(--coral-light); color: var(--coral); }
+.type-pill.active.home { border-color: var(--green); background: var(--green-light); color: var(--green-dark); }
+.type-pill.active.weekend { border-color: var(--purple); background: var(--purple-light); color: var(--purple); }
+.section { margin-bottom: 1.25rem; }
+.section-header {
+ display: flex;
+ align-items: center;
+ gap: 8px;
+ margin-bottom: 8px;
+ padding: 0 2px;
+}
+.section-icon {
+ width: 24px;
+ height: 24px;
+ border-radius: 6px;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ font-size: 13px;
+ flex-shrink: 0;
+}
+.section-title {
+ font-size: 12px;
+ font-weight: 500;
+ color: var(--text-muted);
+ text-transform: uppercase;
+ letter-spacing: 0.06em;
+}
+.section-count {
+ font-size: 11px;
+ color: var(--text-faint);
+ margin-left: auto;
+}
+.card {
+ background: var(--surface);
+ border-radius: var(--radius);
+ border: 1px solid var(--border);
+ overflow: hidden;
+ box-shadow: var(--shadow);
+}
+.item {
+ display: flex;
+ align-items: flex-start;
+ gap: 12px;
+ padding: 12px 14px;
+ border-bottom: 1px solid var(--border);
+ cursor: pointer;
+ transition: background 0.1s;
+ user-select: none;
+}
+.item:last-child { border-bottom: none; }
+.item:hover { background: var(--surface2); }
+.item.done { opacity: 0.5; }
+.check {
+ width: 20px;
+ height: 20px;
+ border-radius: 50%;
+ border: 1.5px solid var(--border-med);
+ flex-shrink: 0;
+ margin-top: 1px;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ transition: all 0.2s;
+ background: var(--surface);
+}
+.item.done .check {
+ background: var(--green);
+ border-color: var(--green);
+}
+.check-tick {
+ width: 10px;
+ height: 10px;
+ opacity: 0;
+ transition: opacity 0.15s;
+}
+.item.done .check-tick { opacity: 1; }
+.item-body { flex: 1; min-width: 0; }
+.item-name {
+ font-size: 14px;
+ font-weight: 400;
+ color: var(--text);
+ margin-bottom: 2px;
+ line-height: 1.4;
+ transition: color 0.15s;
+}
+.item.done .item-name {
+ text-decoration: line-through;
+ color: var(--text-faint);
+}
+.item-sub {
+ font-size: 12px;
+ color: var(--text-muted);
+ line-height: 1.4;
+}
+.item-tag {
+ font-size: 10px;
+ font-weight: 500;
+ padding: 2px 7px;
+ border-radius: 99px;
+ flex-shrink: 0;
+ margin-top: 2px;
+ letter-spacing: 0.03em;
+}
+.tag-sleep { background: var(--blue-light); color: var(--blue); }
+.tag-food { background: var(--amber-light); color: var(--amber); }
+.tag-move { background: var(--green-light); color: var(--green-dark); }
+.tag-yoga { background: var(--purple-light); color: var(--purple); }
+.tag-commute { background: var(--coral-light); color: var(--coral); }
+.tag-mind { background: var(--surface2); color: var(--text-muted); }
 
-    .section { margin-bottom: 1.25rem; }
-    .section-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; padding: 0 2px; }
-    .section-icon {
-      width: 24px; height: 24px; border-radius: 6px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 13px; flex-shrink: 0;
-    }
-    .section-title {
-      font-size: 12px; font-weight: 500; color: var(--text-muted);
-      text-transform: uppercase; letter-spacing: 0.06em;
-    }
-    .section-count { font-size: 11px; color: var(--text-faint); margin-left: auto; }
+.energy-card {
+ background: var(--surface);
+ border-radius: var(--radius);
+ border: 1px solid var(--border);
+ box-shadow: var(--shadow);
+ padding: 16px;
+}
+.score-row {
+ display: grid;
+ grid-template-columns: repeat(3, 1fr);
+ gap: 10px;
+ margin-bottom: 14px;
+}
+.score-block { text-align: center; }
+.score-label {
+ font-size: 11px;
+ color: var(--text-muted);
+ margin-bottom: 6px;
+ text-transform: uppercase;
+ letter-spacing: 0.05em;
+}
+.score-val {
+ font-family: 'DM Serif Display', serif;
+ font-size: 26px;
+ color: var(--text);
+ line-height: 1;
+ margin-bottom: 6px;
+}
+.slider {
+ width: 100%;
+ accent-color: var(--green);
+}
+.note-area {
+ width: 100%;
+ background: var(--surface2);
+ border: 1px solid var(--border);
+ border-radius: var(--radius-sm);
+ padding: 10px 12px;
+ font-family: 'DM Sans', sans-serif;
+ font-size: 13px;
+ color: var(--text);
+ resize: none;
+ margin-top: 12px;
+ outline: none;
+ transition: border-color 0.15s;
+}
+.note-area::placeholder { color: var(--text-faint); }
+.note-area:focus { border-color: var(--border-med); }
+.save-row {
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ margin-top: 12px;
+}
+.save-btn {
+ font-family: 'DM Sans', sans-serif;
+ font-size: 13px;
+ font-weight: 500;
+ padding: 8px 18px;
+ border-radius: var(--radius-sm);
+ background: var(--green);
+ color: white;
+ border: none;
+ cursor: pointer;
+ transition: background 0.15s;
+}
+.save-btn:hover { background: var(--green-dark); }
+.saved-msg {
+ font-size: 12px;
+ color: var(--green);
+ opacity: 0;
+ transition: opacity 0.3s;
+}
+.saved-msg.show { opacity: 1; }
 
-    .card {
-      background: var(--surface);
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      overflow: hidden;
-      box-shadow: var(--shadow);
-    }
-    .item {
-      display: flex; align-items: flex-start; gap: 12px;
-      padding: 12px 14px;
-      border-bottom: 1px solid var(--border);
-      cursor: pointer;
-      transition: background 0.1s;
-      user-select: none;
-    }
-    .item:last-child { border-bottom: none; }
-    .item:hover { background: var(--surface2); }
-    .item.done { opacity: 0.5; }
-    .check {
-      width: 20px; height: 20px; border-radius: 50%;
-      border: 1.5px solid var(--border-med);
-      flex-shrink: 0; margin-top: 1px;
-      display: flex; align-items: center; justify-content: center;
-      transition: all 0.2s; background: var(--surface);
-    }
-    .item.done .check { background: var(--green); border-color: var(--green); }
-    .check-tick { width: 10px; height: 10px; opacity: 0; transition: opacity 0.15s; }
-    .item.done .check-tick { opacity: 1; }
-    .item-body { flex: 1; min-width: 0; }
-    .item-name { font-size: 14px; font-weight: 400; color: var(--text); margin-bottom: 2px; line-height: 1.4; transition: color 0.15s; }
-    .item.done .item-name { text-decoration: line-through; color: var(--text-faint); }
-    .item-sub { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
-    .item-tag { font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 99px; flex-shrink: 0; margin-top: 2px; letter-spacing: 0.03em; }
-    .tag-sleep { background: var(--blue-light); color: var(--blue); }
-    .tag-food { background: var(--amber-light); color: var(--amber); }
-    .tag-move { background: var(--green-light); color: var(--green-dark); }
-    .tag-yoga { background: var(--purple-light); color: var(--purple); }
-    .tag-commute { background: var(--coral-light); color: var(--coral); }
-    .tag-mind { background: var(--surface2); color: var(--text-muted); }
+.tabs {
+ display: flex;
+ gap: 0;
+ border: 1px solid var(--border-med);
+ border-radius: var(--radius-sm);
+ overflow: hidden;
+ margin-bottom: 1.25rem;
+}
+.tab-btn {
+ flex: 1;
+ font-family: 'DM Sans', sans-serif;
+ font-size: 13px;
+ padding: 8px 4px;
+ border: none;
+ background: var(--surface);
+ color: var(--text-muted);
+ cursor: pointer;
+ transition: all 0.15s;
+ border-right: 1px solid var(--border);
+}
+.tab-btn:last-child { border-right: none; }
+.tab-btn.active { background: var(--surface2); color: var(--text); font-weight: 500; }
 
-    .energy-card { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); padding: 16px; }
-    .score-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
-    .score-block { text-align: center; }
-    .score-label { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
-    .score-val { font-family: 'DM Serif Display', serif; font-size: 26px; color: var(--text); line-height: 1; margin-bottom: 6px; }
-    .slider { width: 100%; accent-color: var(--green); }
+.history-entry {
+ background: var(--surface);
+ border: 1px solid var(--border);
+ border-radius: var(--radius);
+ padding: 14px 16px;
+ margin-bottom: 8px;
+ box-shadow: var(--shadow);
+}
+.history-header {
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
+ margin-bottom: 8px;
+}
+.history-date { font-size: 14px; font-weight: 500; }
+.history-badge {
+ font-size: 11px;
+ padding: 3px 10px;
+ border-radius: 99px;
+ text-transform: capitalize;
+}
+.history-badge.office { background: var(--coral-light); color: var(--coral); }
+.history-badge.home { background: var(--green-light); color: var(--green-dark); }
+.history-badge.weekend { background: var(--purple-light); color: var(--purple); }
+.history-scores {
+ display: flex;
+ gap: 16px;
+ margin-bottom: 6px;
+}
+.history-score {
+ font-size: 12px;
+ color: var(--text-muted);
+}
+.history-score strong { color: var(--text); font-weight: 500; }
+.history-completion {
+ font-size: 12px;
+ color: var(--text-muted);
+}
+.history-note {
+ font-size: 12px;
+ color: var(--text-muted);
+ font-style: italic;
+ margin-top: 4px;
+}
+.empty { text-align: center; padding: 3rem 1rem; color: var(--text-faint); font-size: 14px; }
 
-    .note-area { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--text); resize: none; margin-top: 12px; outline: none; transition: border-color 0.15s; }
-    .note-area::placeholder { color: var(--text-faint); }
-    .note-area:focus { border-color: var(--border-med); }
+.streak-bar {
+ background: var(--surface);
+ border: 1px solid var(--border);
+ border-radius: var(--radius);
+ padding: 14px 16px;
+ margin-bottom: 1.25rem;
+ box-shadow: var(--shadow);
+ display: flex;
+ align-items: center;
+ gap: 16px;
+}
+.streak-num {
+ font-family: 'DM Serif Display', serif;
+ font-size: 36px;
+ color: var(--green);
+ line-height: 1;
+ flex-shrink: 0;
+}
+.streak-info { flex: 1; }
+.streak-label { font-size: 13px; font-weight: 500; color: var(--text); }
+.streak-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.week-dots { display: flex; gap: 6px; margin-top: 8px; }
+.week-dot {
+ width: 10px; height: 10px; border-radius: 50%;
+ background: var(--border-med);
+}
+.week-dot.done { background: var(--green); }
+.week-dot.today { background: var(--amber); }
 
-    .save-row { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; }
-    .save-btn { font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; padding: 8px 18px; border-radius: var(--radius-sm); background: var(--green); color: white; border: none; cursor: pointer; transition: background 0.15s; }
-    .save-btn:hover { background: var(--green-dark); }
-    .saved-msg { font-size: 12px; color: var(--green); opacity: 0; transition: opacity 0.3s; }
-    .saved-msg.show { opacity: 1; }
+.confetti-pop {
+ position: fixed;
+ top: 50%;
+ left: 50%;
+ transform: translate(-50%, -50%);
+ font-family: 'DM Serif Display', serif;
+ font-size: 18px;
+ color: var(--green);
+ background: var(--surface);
+ border: 1px solid var(--border);
+ border-radius: var(--radius);
+ padding: 16px 24px;
+ box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+ z-index: 999;
+ opacity: 0;
+ transition: opacity 0.3s;
+ pointer-events: none;
+ text-align: center;
+}
+.confetti-pop.show { opacity: 1; }
 
-    .tabs { display: flex; gap: 0; border: 1px solid var(--border-med); border-radius: var(--radius-sm); overflow: hidden; margin-bottom: 1.25rem; }
-    .tab-btn { flex: 1; font-family: 'DM Sans', sans-serif; font-size: 13px; padding: 8px 4px; border: none; background: var(--surface); color: var(--text-muted); cursor: pointer; transition: all 0.15s; border-right: 1px solid var(--border); }
-    .tab-btn:last-child { border-right: none; }
-    .tab-btn.active { background: var(--surface2); color: var(--text); font-weight: 500; }
+@keyframes fadeIn {
+ from { opacity: 0; transform: translateY(8px); }
+ to { opacity: 1; transform: translateY(0); }
+}
+.section { animation: fadeIn 0.3s ease both; }
 
-    .history-entry { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 8px; box-shadow: var(--shadow); }
-    .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-    .history-date { font-size: 14px; font-weight: 500; }
-    .history-badge { font-size: 11px; padding: 3px 10px; border-radius: 99px; text-transform: capitalize; }
-    .history-badge.office { background: var(--coral-light); color: var(--coral); }
-    .history-badge.home { background: var(--green-light); color: var(--green-dark); }
-    .history-badge.weekend { background: var(--purple-light); color: var(--purple); }
-    .history-scores { display: flex; gap: 16px; margin-bottom: 6px; }
-    .history-score { font-size: 12px; color: var(--text-muted); }
-    .history-score strong { color: var(--text); font-weight: 500; }
-    .history-completion { font-size: 12px; color: var(--text-muted); }
-    .history-note { font-size: 12px; color: var(--text-muted); font-style: italic; margin-top: 4px; }
-    .empty { text-align: center; padding: 3rem 1rem; color: var(--text-faint); font-size: 14px; }
-
-    .streak-bar { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 1.25rem; box-shadow: var(--shadow); display: flex; align-items: center; gap: 16px; }
-    .streak-num { font-family: 'DM Serif Display', serif; font-size: 36px; color: var(--green); line-height: 1; flex-shrink: 0; }
-    .streak-info { flex: 1; }
-    .streak-label { font-size: 13px; font-weight: 500; color: var(--text); }
-    .streak-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
-    .week-dots { display: flex; gap: 6px; margin-top: 8px; }
-    .week-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border-med); }
-    .week-dot.done { background: var(--green); }
-    .week-dot.today { background: var(--amber); }
-
-    .confetti-pop {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-family: 'DM Serif Display', serif;
-      font-size: 18px;
-      color: var(--green);
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 16px 24px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
-      z-index: 999;
-      opacity: 0;
-      transition: opacity 0.3s;
-      pointer-events: none;
-      text-align: center;
-    }
-    .confetti-pop.show { opacity: 1; }
-
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-    .section { animation: fadeIn 0.3s ease both; }
-
-    .sync-row { display:flex; gap:8px; margin-top:10px; }
-    .sync-small { font-size: 12px; color: var(--text-muted); margin-top: 8px; line-height: 1.35; }
-    .ghost-btn {
-      background: transparent;
-      border: 1px solid var(--border-med);
-      color: var(--text-muted);
-      padding: 8px 12px;
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
-    }
-    .ghost-btn:hover { background: var(--surface2); color: var(--text); }
-  </style>
+/* Sync card */
+.sync-row { display:flex; gap:8px; margin-top:10px; }
+.sync-small { font-size: 12px; color: var(--text-muted); margin-top: 8px; line-height: 1.35; }
+.ghost-btn {
+ background: transparent;
+ border: 1px solid var(--border-med);
+ color: var(--text-muted);
+ padding: 8px 12px;
+ border-radius: var(--radius-sm);
+ cursor: pointer;
+ font-family: 'DM Sans', sans-serif;
+ font-size: 13px;
+}
+.ghost-btn:hover { background: var(--surface2); color: var(--text); }
+</style>
 </head>
 <body>
-  <div class="header">
-    <div class="header-top">
-      <div class="header-left">
-        <h1>Today's plan</h1>
-        <div class="date-line" id="dateLine"></div>
-      </div>
-      <div class="day-badge" id="dayBadge">—</div>
+
+<div class="header">
+  <div class="header-top">
+    <div class="header-left">
+      <h1>Today's plan</h1>
+      <div class="date-line" id="dateLine"></div>
     </div>
-    <div class="progress-section">
-      <div class="progress-bar-outer">
-        <div class="progress-bar-inner" id="progressBar" style="width:0%"></div>
+    <div class="day-badge" id="dayBadge">—</div>
+  </div>
+  <div class="progress-section">
+    <div class="progress-bar-outer">
+      <div class="progress-bar-inner" id="progressBar" style="width:0%"></div>
+    </div>
+    <div class="progress-text" id="progressText">0 / 0</div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- Sync across devices -->
+  <div class="card" style="padding:14px 14px; margin-bottom: 12px;">
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+      <div>
+        <div style="font-weight:500; font-size:14px;">Sync across devices</div>
+        <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">
+          Continue with Google once to share your inputs between phone + computer.
+        </div>
       </div>
-      <div class="progress-text" id="progressText">0 / 0</div>
+      <div id="syncStatus" style="font-size:12px; color:var(--text-muted); white-space:nowrap;">Not linked</div>
+    </div>
+    <div class="sync-row">
+      <button class="save-btn" onclick="googleLinkOrSignIn()" style="width:100%;">Continue with Google</button>
+      <button class="ghost-btn" onclick="signOut()" title="Sign out on this device">Sign out</button>
+    </div>
+    <div class="sync-small">
+      Tip: If your computer already has the history you want to keep, link Google there first, then use Google on your phone.
     </div>
   </div>
 
-  <div class="main">
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('today', this)">Today</button>
+    <button class="tab-btn" onclick="showTab('energy', this)">Energy log</button>
+    <button class="tab-btn" onclick="showTab('history', this)">History</button>
+  </div>
 
-    <div class="card" style="padding:14px 14px; margin-bottom: 12px;">
-      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
-        <div>
-          <div style="font-weight:500; font-size:14px;">Sync across devices</div>
-          <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">
-            Continue with Google once to share your inputs between phone + computer.
+  <div id="paneToday">
+    <div class="day-type-picker">
+      <button class="type-pill office" id="pill-office" onclick="setDayType('office')">Office day</button>
+      <button class="type-pill home" id="pill-home" onclick="setDayType('home')">Home day</button>
+      <button class="type-pill weekend" id="pill-weekend" onclick="setDayType('weekend')">Weekend</button>
+    </div>
+    <div id="checklistSections"></div>
+  </div>
+
+  <div id="paneEnergy" style="display:none;">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon" style="background:var(--green-light);">⚡</div>
+        <div class="section-title">Morning scores</div>
+      </div>
+      <div class="energy-card">
+        <div class="score-row">
+          <div class="score-block">
+            <div class="score-label">Energy</div>
+            <div class="score-val" id="eValEnergy">5</div>
+            <input type="range" class="slider" min="1" max="10" step="1" value="5" id="slEnergy" oninput="updateScore('Energy',this.value)">
+          </div>
+          <div class="score-block">
+            <div class="score-label">Mood</div>
+            <div class="score-val" id="eValMood">5</div>
+            <input type="range" class="slider" min="1" max="10" step="1" value="5" id="slMood" oninput="updateScore('Mood',this.value)">
+          </div>
+          <div class="score-block">
+            <div class="score-label">Sleep</div>
+            <div class="score-val" id="eValSleep">5</div>
+            <input type="range" class="slider" min="1" max="10" step="1" value="5" id="slSleep" oninput="updateScore('Sleep',this.value)">
           </div>
         </div>
-        <div id="syncStatus" style="font-size:12px; color:var(--text-muted); white-space:nowrap;">Not linked</div>
-      </div>
-      <div class="sync-row">
-        <button class="save-btn" onclick="googleLinkOrSignIn()" style="width:100%;">Continue with Google</button>
-        <button class="ghost-btn" onclick="signOut()" title="Sign out on this device">Sign out</button>
-      </div>
-      <div class="sync-small">
-        Tip: If your computer already has the history you want to keep, link Google there first, then use Google on your phone.
+        <textarea class="note-area" id="eNote" rows="2" placeholder="What felt different today? Anything worth noting..."></textarea>
+        <div class="save-row">
+          <button class="save-btn" onclick="saveEnergy()">Save log</button>
+          <span class="saved-msg" id="eSavedMsg">Saved</span>
+        </div>
       </div>
     </div>
+  </div>
 
-    <div class="tabs">
-      <button class="tab-btn active" onclick="showTab('today', this)">Today</button>
-      <button class="tab-btn" onclick="showTab('energy', this)">Energy log</button>
-      <button class="tab-btn" onclick="showTab('history', this)">History</button>
-    </div>
+  <div id="paneHistory" style="display:none;">
+    <div class="streak-bar" id="streakBar"></div>
+    <div id="historyList"></div>
+  </div>
 
-    <div id="paneToday">
-      <div class="day-type-picker">
-        <button class="type-pill office" id="pill-office" onclick="setDayType('office')">Office day</button>
-        <button class="type-pill home" id="pill-home" onclick="setDayType('home')">Home day</button>
-        <button class="type-pill weekend" id="pill-weekend" onclick="setDayType('weekend')">Weekend</button>
-      </div>
-      <div id="checklistSections"></div>
-    </div>
+</div>
 
-    <div id="paneEnergy" style="display:none;">
-      <div class="section">
+<div class="confetti-pop" id="confettiPop">All done for today!<br><span style="font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text-muted)">Great work. Rest well.</span></div>
+
+<!-- Firebase SDK (Compat) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script>
+/************************************************************
+ * FIREBASE CONFIG — paste your values here
+ ************************************************************/
+const firebaseConfig = {
+  apiKey: "AIzaSyC-1d0tEN5JPDwvBYpW315mT4-eYMMfNuc",
+  authDomain: "energychecklist.firebaseapp.com",
+  projectId: "energychecklist",
+  appId: "1:364939416755:web:3d3893a7985016323eccc6"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+const googleProvider = new firebase.auth.GoogleAuthProvider();
+googleProvider.setCustomParameters({ prompt: "select_account" });
+
+let currentUser = null;
+
+// Firestore persistence (replaces localStorage)
+async function load(key, fallback) {
+  if (!currentUser) return fallback;
+  try {
+    const doc = await db.collection("users").doc(currentUser.uid).collection("data").doc(key).get();
+    return doc.exists ? doc.data().value : fallback;
+  } catch (e) {
+    console.error("Load failed:", e);
+    return fallback;
+  }
+}
+
+async function save(key, val) {
+  if (!currentUser) return;
+  try {
+    await db.collection("users").doc(currentUser.uid).collection("data").doc(key).set({ value: val });
+  } catch (e) {
+    console.error("Save failed:", e);
+  }
+}
+
+async function hasAnyCloudData() {
+  if (!currentUser) return false;
+  try {
+    const snap = await db.collection("users").doc(currentUser.uid).collection("data").limit(1).get();
+    return !snap.empty;
+  } catch (e) {
+    console.error("hasAnyCloudData failed:", e);
+    return false;
+  }
+}
+
+/**
+ * Google Sign-in / Linking
+ * - If this device is anonymous AND already has cloud data, link Google to preserve the UID + history. [3](https://drkathleenmahannah.com/blog/menopause-brain-health-lifestyle-supplements)
+ * - Otherwise, sign in with Google (common for a new phone). [2](https://www.realsimple.com/healthy-habits-for-women-over-50-11914140)
+ * - Redirect fallback is used when popups are blocked (often on iPhone). [4](https://menopause.org/press-releases/how-menopause-restructures-a-womans-brain)[3](https://drkathleenmahannah.com/blog/menopause-brain-health-lifestyle-supplements)
+ */
+async function googleLinkOrSignIn() {
+  if (!auth.currentUser) return;
+
+  try {
+    const shouldLink = auth.currentUser.isAnonymous && (await hasAnyCloudData());
+
+    if (shouldLink) {
+      try {
+        await auth.currentUser.linkWithPopup(googleProvider);
+      } catch (popupErr) {
+        await auth.currentUser.linkWithRedirect(googleProvider);
+      }
+    } else {
+      try {
+        await auth.signInWithPopup(googleProvider);
+      } catch (popupErr) {
+        await auth.signInWithRedirect(googleProvider);
+      }
+    }
+  } catch (e) {
+    console.error("Google sign-in/link failed:", e);
+    alert("Google sign-in failed. If this is a new device, try again and choose the same Google account you used on your computer.");
+  }
+}
+
+async function handleRedirectResult() {
+  try {
+    await auth.getRedirectResult();
+  } catch (e) {
+    console.error("Redirect result error:", e);
+  }
+}
+
+async function signOut() {
+  try {
+    await auth.signOut();
+    await auth.signInAnonymously();
+  } catch (e) {
+    console.error("Sign out failed:", e);
+  }
+}
+
+function updateSyncStatus() {
+  const el = document.getElementById("syncStatus");
+  if (!el) return;
+  const u = auth.currentUser;
+  if (!u) { el.textContent = "…"; el.style.color = "var(--text-muted)"; return; }
+  if (u.isAnonymous) { el.textContent = "Not linked"; el.style.color = "var(--text-muted)"; }
+  else { el.textContent = "Linked"; el.style.color = "var(--green)"; }
+}
+
+/************************************************************
+ * YOUR ORIGINAL CHECKLIST (from daily_checklist8.html) [1](https://firebase.google.com/docs/auth/web/anonymous-auth)
+ ************************************************************/
+
+const CHECKLISTS = {
+  office: [
+    {
+      title: "Morning", icon: "🌅", color: "var(--amber-light)",
+      items: [
+        { id: "o-wake", name: "Wake by 6:15", sub: "Non-negotiable for an 8:30 start", tag: "sleep" },
+        { id: "o-breakfast", name: "Protein breakfast before leaving", sub: "Prepped the night before — eggs, oats, or a smoothie", tag: "food" },
+        { id: "o-water-am", name: "Water bottle filled and packed", sub: "Aim for 2L across the day", tag: "food" },
+        { id: "o-lunch-packed", name: "Packed lunch in bag", sub: "Biggest diet quality lever on office days", tag: "food" },
+      ]
+    },
+    {
+      title: "Commute in", icon: "🚗", color: "var(--coral-light)",
+      items: [
+        { id: "o-podcast", name: "Energising podcast or audiobook", sub: "Feel Better Live More / ZOE / The Doctor's Kitchen", tag: "commute" },
+        { id: "o-breathwork", name: "Breathwork when tension builds", sub: "4-4-4 rhythmic breathing — inhale 4, exhale 4", tag: "mind" },
+        { id: "o-posture", name: "Posture check every 30 min", sub: "Shoulders back, spine tall, soft grip on the wheel", tag: "commute" },
+      ]
+    },
+    {
+      title: "At the office", icon: "🏢", color: "var(--blue-light)",
+      items: [
+        { id: "o-walk-in", name: "Walk the long way from car to office", sub: "8–10 min of movement after the drive", tag: "move" },
+        { id: "o-lunch-eat", name: "Eat packed lunch — away from desk", sub: "Screen-free lunch restores focus for the afternoon", tag: "food" },
+        { id: "o-lunch-walk", name: "10–15 min walk at lunch", sub: "Outside. Even a short walk resets afternoon energy", tag: "move" },
+        { id: "o-water-pm", name: "Drink water through the afternoon", sub: "Dehydration is a sneaky energy thief", tag: "food" },
+      ]
+    },
+    {
+      title: "Commute home", icon: "🎧", color: "var(--coral-light)",
+      items: [
+        { id: "o-podcast-home", name: "Wind-down podcast or music", sub: "Decompress deliberately — not news", tag: "commute" },
+        { id: "o-neck", name: "Neck & shoulder releases at red lights", sub: "Shrug, roll, release jaw — arrive home less tense", tag: "commute" },
+      ]
+    },
+    {
+      title: "Evening", icon: "🌙", color: "var(--purple-light)",
+      items: [
+        { id: "o-yoga", name: "10–15 min restorative yoga + balance", sub: "Before dinner — hip flexors, spinal twist, legs up the wall. Add single-leg calf raises between poses.", tag: "yoga" },
+        { id: "o-dinner", name: "Whole food dinner before 8pm", sub: "Pre-planned or batch-cooked — no decisions needed", tag: "food" },
+        { id: "o-prep-tomorrow", name: "Prep tomorrow's breakfast & lunch", sub: "5 mins now saves 30 mins of stress tomorrow morning", tag: "food" },
+        { id: "o-screens", name: "Screens off by 10pm", sub: "20 mins screen-free before bed improves sleep quality", tag: "sleep" },
+        { id: "o-bed", name: "In bed by 10:30pm", sub: "6:15 wake needs lights out by 10:30 for 8 hours", tag: "sleep" },
+        { id: "o-sleep-check", name: "Poor sleep protocol (if needed)", sub: "Energy ≤3 or under 6hrs: yoga = 5 min stretch only. Skip HIIT. Early bedtime above everything.", tag: "sleep" },
+      ]
+    }
+  ],
+  home: [
+    {
+      title: "Morning", icon: "🌅", color: "var(--amber-light)",
+      items: [
+        { id: "h-walk", name: "Morning walk", sub: "Tue: 20–30 min before 8:30. Fri: 1 hour 8:00–9:00 — sets energy and circadian rhythm for the whole day", tag: "move" },
+        { id: "h-breakfast", name: "Protein breakfast", sub: "Tue: before 8:30. Fri: before or after your walk — eggs, yogurt, smoked salmon", tag: "food" },
+        { id: "h-yoga-am", name: "20 min morning energiser yoga (Tue only)", sub: "After the walk, before work. Skip on Fridays — the 1hr walk covers this", tag: "yoga" },
+        { id: "h-water", name: "2L water through the day", sub: "Fill a large bottle first thing and track it", tag: "food" },
+      ]
+    },
+    {
+      title: "Work hours", icon: "💻", color: "var(--blue-light)",
+      items: [
+        { id: "h-break1", name: "11am break — balance", sub: "Single-leg standing 30 sec each side. Eyes open first, progress to eyes closed over weeks.", tag: "mind" },
+        { id: "h-lunch", name: "Whole food lunch — away from screen", sub: "Eat properly. Screen-free if possible", tag: "food" },
+        { id: "h-lunch-walk", name: "Walk after lunch", sub: "Tue: 15 min. Fri: 10 min is enough — you've already had an hour this morning", tag: "move" },
+        { id: "h-break2", name: "3pm break — breathwork", sub: "4-4-4 rhythmic breathing for 3 minutes. Inhale 4, exhale 4. More effective than coffee at this point.", tag: "mind" },
+      ]
+    },
+    {
+      title: "Post-work", icon: "🧘", color: "var(--purple-light)",
+      items: [
+        { id: "h-yoga-pm", name: "25–30 min post-work yoga", sub: "Log off and go straight to the mat — don't sit down first", tag: "yoga" },
+        { id: "h-dinner", name: "Whole food dinner — cooked at home", sub: "Today is a cook day. Use the time you have", tag: "food" },
+        { id: "h-batch", name: "Batch cook for office days (Thu only)", sub: "30–45 mins: soup, grains, roasted veg, protein", tag: "food" },
+      ]
+    },
+    {
+      title: "Evening", icon: "🌙", color: "var(--purple-light)",
+      items: [
+        { id: "h-screens", name: "Screens off by 10pm", sub: "Same bedtime discipline as office days", tag: "sleep" },
+        { id: "h-bed", name: "In bed by 10:30pm", sub: "Consistent bedtime — even on home days", tag: "sleep" },
+        { id: "h-sleep-check", name: "Poor sleep protocol (if needed)", sub: "Energy ≤3: reduce strength to 2 sets. Skip HIIT. No morning yoga. Early bedtime above everything.", tag: "sleep" },
+      ]
+    }
+  ],
+  weekend: [
+    {
+      title: "Morning", icon: "☀️", color: "var(--amber-light)",
+      items: [
+        { id: "w-walk", name: "40–45 min walk (Sat) / 20–30 min (Sun)", sub: "Longer walk on Saturday. Gentle pace on Sunday", tag: "move" },
+        { id: "w-breakfast", name: "Relaxed whole-food breakfast", sub: "Take your time. No rush — this is the point", tag: "food" },
+        { id: "w-yoga", name: "Yoga session", sub: "35 min Saturday flow / 25 min Sunday restorative", tag: "yoga" },
+        { id: "w-water", name: "2L water", sub: "Easy to forget on relaxed days — stay on top of it", tag: "food" },
+      ]
+    },
+    {
+      title: "Daytime", icon: "🌿", color: "var(--green-light)",
+      items: [
+        { id: "w-lunch", name: "Good quality lunch — cook something", sub: "This is your best opportunity to eat really well", tag: "food" },
+        { id: "w-balance", name: "Balance check (Sunday)", sub: "Single-leg eyes-closed — count seconds each side. Note in your weekly review.", tag: "mind" },
+        { id: "w-deload", name: "Deload week check (every 4th week)", sub: "Weeks 4, 8, 12: cut all strength sets to 2, skip HIIT, replace Saturday flow with restorative yoga.", tag: "mind" },
+        { id: "w-energy-review", name: "Weekly energy review (Sunday)", sub: "5 mins: score the week, notice patterns, write one reflection", tag: "mind" },
+        { id: "w-prep", name: "Prep for the week ahead (Sunday)", sub: "Breakfasts, lunches, dinners planned. 30 mins max", tag: "food" },
+        { id: "w-new-recipe", name: "Try one new whole-food recipe", sub: "Keeps variety high and boredom low", tag: "food" },
+      ]
+    },
+    {
+      title: "Evening", icon: "🌙", color: "var(--purple-light)",
+      items: [
+        { id: "w-dinner", name: "Proper dinner before 8pm", sub: "Large meals late at night impact sleep quality", tag: "food" },
+        { id: "w-screens", name: "Screens off by 10:30pm", sub: "Weekend lie-ins feel good but wreck Monday energy", tag: "sleep" },
+        { id: "w-bed", name: "In bed within 1 hr of weekday bedtime", sub: "Stay within an hour of your weekday time", tag: "sleep" },
+      ]
+    }
+  ]
+};
+
+const TAG_STYLES = {
+  sleep: 'tag-sleep', food: 'tag-food', move: 'tag-move',
+  yoga: 'tag-yoga', commute: 'tag-commute', mind: 'tag-mind'
+};
+const TAG_LABELS = {
+  sleep: 'sleep', food: 'nutrition', move: 'movement',
+  yoga: 'yoga', commute: 'commute', mind: 'mindset'
+};
+
+function todayKey() { return new Date().toISOString().split('T')[0]; }
+const today = todayKey();
+
+let dayType = detectDayType();
+let checked = {};
+let energyData = { energy: 5, mood: 5, sleep: 5, note: '' };
+let allHistory = [];
+
+function detectDayType() {
+  const dow = new Date().getDay();
+  if (dow === 0 || dow === 6) return 'weekend';
+  return 'home';
+}
+
+async function setDayType(type) {
+  dayType = type;
+  await save('dayType_' + today, type);
+  updatePills();
+  renderChecklist();
+  updateProgress();
+}
+
+function updatePills() {
+  ['office','home','weekend'].forEach(t => {
+    const el = document.getElementById('pill-' + t);
+    el.classList.toggle('active', t === dayType);
+  });
+  const badge = document.getElementById('dayBadge');
+  const labels = { office: 'Office day', home: 'Home day', weekend: 'Weekend' };
+  badge.textContent = labels[dayType];
+  badge.className = 'day-badge ' + dayType;
+}
+
+function renderChecklist() {
+  const sections = CHECKLISTS[dayType];
+  const container = document.getElementById('checklistSections');
+  container.innerHTML = sections.map((sec, si) => {
+    const doneCount = sec.items.filter(item => checked[item.id]).length;
+    return `
+      <div class="section" style="animation-delay:${si * 0.05}s">
         <div class="section-header">
-          <div class="section-icon" style="background:var(--green-light);">⚡</div>
-          <div class="section-title">Morning scores</div>
+          <div class="section-icon" style="background:${sec.color}">${sec.icon}</div>
+          <div class="section-title">${sec.title}</div>
+          <div class="section-count">${doneCount}/${sec.items.length}</div>
         </div>
-        <div class="energy-card">
-          <div class="score-row">
-            <div class="score-block">
-              <div class="score-label">Energy</div>
-              <div class="score-val" id="eValEnergy">5</div>
-              <input type="range" class="slider" min="1" max="10" step="1" value="5" id="slEnergy" oninput="updateScore('Energy',this.value)">
+        <div class="card">
+          ${sec.items.map(item => `
+            <div class="item${checked[item.id] ? ' done' : ''}" onclick="toggleItem('${item.id}')" id="item-${item.id}">
+              <div class="check">
+                <svg class="check-tick" viewBox="0 0 10 10" fill="none">
+                  <path d="M1.5 5l2.5 2.5 4.5-5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div class="item-body">
+                <div class="item-name">${item.name}</div>
+                <div class="item-sub">${item.sub}</div>
+              </div>
+              <div class="item-tag ${TAG_STYLES[item.tag]}">${TAG_LABELS[item.tag]}</div>
             </div>
-            <div class="score-block">
-              <div class="score-label">Mood</div>
-              <div class="score-val" id="eValMood">5</div>
-              <input type="range" class="slider" min="1" max="10" step="1" value="5" id="slMood" oninput="updateScore('Mood',this.value)">
-            </div>
-            <div class="score-block">
-              <div class="score-label">Sleep</div>
-              <div class="score-val" id="eValSleep">5</div>
-              <input type="range" class="slider" min="1" max="10" step="1" value="5" id="slSleep" oninput="updateScore('Sleep',this.value)">
-            </div>
-          </div>
-          <textarea class="note-area" id="eNote" rows="2" placeholder="What felt different today? Anything worth noting..."></textarea>
-          <div class="save-row">
-            <button class="save-btn" onclick="saveEnergy()">Save log</button>
-            <span class="saved-msg" id="eSavedMsg">Saved</span>
-          </div>
+          `).join('')}
         </div>
       </div>
+    `;
+  }).join('');
+}
+
+async function toggleItem(id) {
+  checked[id] = !checked[id];
+  await save('checked_' + today, checked);
+
+  const el = document.getElementById('item-' + id);
+  if (el) el.classList.toggle('done', !!checked[id]);
+
+  updateProgress();
+  checkAllDone();
+  rerenderCounts();
+}
+
+function rerenderCounts() {
+  const sections = CHECKLISTS[dayType];
+  const sectionEls = document.querySelectorAll('.section');
+  sectionEls.forEach((sEl, i) => {
+    const countEl = sEl.querySelector('.section-count');
+    if (countEl && sections[i]) {
+      const s = sections[i];
+      countEl.textContent = s.items.filter(it => checked[it.id]).length + '/' + s.items.length;
+    }
+  });
+}
+
+function updateProgress() {
+  const sections = CHECKLISTS[dayType];
+  const all = sections.flatMap(s => s.items);
+  const done = all.filter(i => checked[i.id]).length;
+  const pct = all.length ? Math.round((done / all.length) * 100) : 0;
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressText').textContent = done + ' / ' + all.length;
+}
+
+let popShown = false;
+function checkAllDone() {
+  const sections = CHECKLISTS[dayType];
+  const all = sections.flatMap(s => s.items);
+  const done = all.filter(i => checked[i.id]).length;
+  if (done === all.length && !popShown) {
+    popShown = true;
+    const pop = document.getElementById('confettiPop');
+    pop.classList.add('show');
+    setTimeout(() => pop.classList.remove('show'), 3000);
+  }
+}
+
+async function updateScore(key, val) {
+  energyData[key.toLowerCase()] = parseInt(val);
+  document.getElementById('eVal' + key).textContent = val;
+  await save('energy_' + today, energyData);
+}
+
+async function saveEnergy() {
+  energyData.note = document.getElementById('eNote').value;
+  await save('energy_' + today, energyData);
+
+  const entry = {
+    date: today,
+    type: dayType,
+    energy: energyData.energy,
+    mood: energyData.mood,
+    sleep: energyData.sleep,
+    note: energyData.note,
+    checkedCount: Object.values(checked).filter(Boolean).length,
+    totalItems: CHECKLISTS[dayType].flatMap(s => s.items).length
+  };
+
+  const existing = allHistory.findIndex(e => e.date === today);
+  if (existing >= 0) allHistory[existing] = entry;
+  else allHistory.unshift(entry);
+
+  await save('history_all', allHistory);
+
+  const msg = document.getElementById('eSavedMsg');
+  msg.classList.add('show');
+  setTimeout(() => msg.classList.remove('show'), 2000);
+}
+
+function formatDate(dateStr) {
+  const d = new Date(dateStr + 'T12:00:00');
+  return d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+}
+
+function renderHistory() {
+  const list = document.getElementById('historyList');
+  if (!allHistory.length) {
+    list.innerHTML = '<div class="empty">No history yet — log your first day!</div>';
+    renderStreak();
+    return;
+  }
+  list.innerHTML = allHistory.map(e => `
+    <div class="history-entry">
+      <div class="history-header">
+        <div class="history-date">${formatDate(e.date)}</div>
+        <div class="history-badge ${e.type}">${e.type}</div>
+      </div>
+      <div class="history-scores">
+        <span class="history-score">Energy <strong>${e.energy}</strong></span>
+        <span class="history-score">Mood <strong>${e.mood}</strong></span>
+        <span class="history-score">Sleep <strong>${e.sleep}</strong></span>
+      </div>
+      <div class="history-completion">${e.checkedCount || 0} of ${e.totalItems || '—'} habits completed</div>
+      ${e.note ? `<div class="history-note">"${e.note}"</div>` : ''}
     </div>
+  `).join('');
+  renderStreak();
+}
 
-    <div id="paneHistory" style="display:none;">
-      <div class="streak-bar" id="streakBar"></div>
-      <div id="historyList"></div>
+function renderStreak() {
+  const dates = allHistory.map(e => e.date).sort();
+  let streak = 0;
+  let d = new Date();
+  d.setHours(0,0,0,0);
+  while (true) {
+    const key = d.toISOString().split('T')[0];
+    if (dates.includes(key)) { streak++; d.setDate(d.getDate() - 1); }
+    else break;
+  }
+  const last7 = [];
+  for (let i = 6; i >= 0; i--) {
+    const dd = new Date();
+    dd.setDate(dd.getDate() - i);
+    dd.setHours(0,0,0,0);
+    const key = dd.toISOString().split('T')[0];
+    last7.push({ key, isToday: key === today, logged: dates.includes(key) });
+  }
+  const dots = last7.map(d =>
+    `<div class="week-dot${d.isToday ? ' today' : (d.logged ? ' done' : '')}"></div>`
+  ).join('');
+  document.getElementById('streakBar').innerHTML = `
+    <div class="streak-num">${streak}</div>
+    <div class="streak-info">
+      <div class="streak-label">day streak</div>
+      <div class="streak-sub">Keep logging every day to build momentum</div>
+      <div class="week-dots">${dots}</div>
     </div>
+  `;
+}
 
-  </div>
+function showTab(name, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('paneToday').style.display = name === 'today' ? 'block' : 'none';
+  document.getElementById('paneEnergy').style.display = name === 'energy' ? 'block' : 'none';
+  document.getElementById('paneHistory').style.display = name === 'history' ? 'block' : 'none';
+  if (name === 'history') renderHistory();
+}
 
-  <div class="confetti-pop" id="confettiPop">All done for today!<br><span style="font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text-muted)">Great work. Rest well.</span></div>
+function setDateLine() {
+  const d = new Date();
+  document.getElementById('dateLine').textContent = d.toLocaleDateString('en-GB', {
+    weekday: 'long', day: 'numeric', month: 'long'
+  });
+}
 
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+function initEnergy() {
+  document.getElementById('slEnergy').value = energyData.energy;
+  document.getElementById('slMood').value = energyData.mood;
+  document.getElementById('slSleep').value = energyData.sleep;
+  document.getElementById('eValEnergy').textContent = energyData.energy;
+  document.getElementById('eValMood').textContent = energyData.mood;
+  document.getElementById('eValSleep').textContent = energyData.sleep;
+  document.getElementById('eNote').value = energyData.note || '';
+}
 
-  <script>
-    /************************************************************
-     * 1) FIREBASE CONFIG
-     * Paste your firebaseConfig values from Firebase Console:
-     * Project settings -> Your apps -> Web app -> Config
-     ************************************************************/
-    const firebaseConfig = {
-      apiKey: "AIzaSyC-1d0tEN5JPDwvBYpW315mT4-eYMMfNuc",
-      authDomain: "energychecklist.firebaseapp.com",
-      projectId: "energychecklist",
-      appId: "1:364939416755:web:3d3893a7985016323eccc6"
-    };
+async function initApp() {
+  // Load persisted state from Firestore
+  dayType = await load('dayType_' + today, detectDayType());
+  checked = await load('checked_' + today, {});
+  energyData = await load('energy_' + today, { energy: 5, mood: 5, sleep: 5, note: '' });
+  allHistory = await load('history_all', []);
 
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
+  setDateLine();
+  updatePills();
+  renderChecklist();
+  updateProgress();
+  initEnergy();
+  updateSyncStatus();
+}
 
-    const googleProvider = new firebase.auth.GoogleAuthProvider();
-    googleProvider.setCustomParameters({ prompt: "select_account" });
-
-    let currentUser = null;
-
-    async function load(key, fallback) {
-      if (!currentUser) return fallback;
-      try {
-        const doc = await db.collection("users").doc(currentUser.uid).collection("data").doc(key).get();
-        return doc.exists ? doc.data().value : fallback;
-      } catch (e) {
-        console.error("Load failed:", e);
-        return fallback;
-      }
+// Boot sequence
+auth.onAuthStateChanged(async (user) => {
+  if (user) {
+    currentUser = user;
+    await handleRedirectResult();
+    currentUser = auth.currentUser;
+    await initApp();
+  } else {
+    // Always start anonymous for immediate usability (then optionally link to Google)
+    try {
+      await auth.signInAnonymously();
+    } catch (e) {
+      console.error("Anonymous sign-in failed:", e);
     }
+  }
+});
+</script>
 
-    async function save(key, val) {
-      if (!currentUser) return;
-      try {
-        await db.collection("users").doc(currentUser.uid).collection("data").doc(key).set({ value: val });
-      } catch (e) {
-        console.error("Save failed:", e);
-      }
-    }
-
-    async function hasAnyCloudData() {
-      if (!currentUser) return false;
-      try {
-        const snap = await db.collection("users").doc(currentUser.uid).collection("data").limit(1).get();
-        return !snap.empty;
-      } catch (e) {
-        console.error("hasAnyCloudData failed:", e);
-        return false;
-      }
-    }
-
-    async function googleLinkOrSignIn() {
-      if (!auth.currentUser) return;
-
-      try {
-        const shouldLink = auth.currentUser.isAnonymous && (await hasAnyCloudData());
-
-        if (shouldLink) {
-          try {
-            await auth.currentUser.linkWithPopup(googleProvider);
-          } catch (popupErr) {
-            await auth.currentUser.linkWithRedirect(googleProvider);
-          }
-        } else {
-          try {
-            await auth.signInWithPopup(googleProvider);
-          } catch (popupErr) {
-            await auth.signInWithRedirect(googleProvider);
-          }
-        }
-      } catch (e) {
-        console.error("Google sign-in/link failed:", e);
-        alert("Google sign-in failed. If this is a new device, try again and choose the same Google account you used on your computer.");
-      }
-    }
-
-    async function handleRedirectResult() {
-      try {
-        await auth.getRedirectResult();
-      } catch (e) {
-        console.error("Redirect result error:", e);
-      }
-    }
-
-    async function signOut() {
-      try {
-        await auth.signOut();
-        await auth.signInAnonymously();
-      } catch (e) {
-        console.error("Sign out failed:", e);
-      }
-    }
-
-    function updateSyncStatus() {
-      const el = document.getElementById("syncStatus");
-      if (!el) return;
-      const u = auth.currentUser;
-      if (!u) { el.textContent = "…"; el.style.color = "var(--text-muted)"; return; }
-      if (u.isAnonymous) { el.textContent = "Not linked"; el.style.color = "var(--text-muted)"; }
-      else { el.textContent = "Linked"; el.style.color = "var(--green)"; }
-    }
-
-    const CHECKLISTS = { /* same structure as your original file */
-      /* ... trimmed for brevity in this chat view ... */
-    };
-
-    // IMPORTANT:
-    // The full CHECKLISTS + app logic is lengthy. If you paste this file as-is,
-    // you MUST include the entire CHECKLISTS object and functions (renderChecklist, etc.).
-    // If you'd like, tell me your repo name and I’ll paste the FULL untrimmed block in one go.
-
-  </script>
 </body>
 </html>
