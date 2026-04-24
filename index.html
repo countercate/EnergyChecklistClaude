@@ -89,7 +89,26 @@ body {
   color: var(--text-muted);
   margin-top: 2px;
 }
+<div class="card" style="padding:14px 14px; margin-bottom: 12px;">
+  <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+    <div>
+      <div style="font-weight:500; font-size:14px;">Sync across devices</div>
+      <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">
+        Sign in with Google once to share data between phone + computer.
+      </div>
+    </div>
+    <div id="syncStatus" style="font-size:12px; color:var(--text-muted); white-space:nowrap;">
+      Not linked
+    </div>
+  </div>
 
+  <div style="display:flex; gap:8px; margin-top:10px;">
+    <button class="save-btn" onclick="googleLinkOrSignIn()" style="width:100%;">
+      Continue with Google
+    </button>
+  </div>
+</div>
+``
 .day-badge {
   font-size: 11px;
   font-weight: 500;
@@ -608,6 +627,71 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 let currentUser = null;
+
+// Google provider
+const googleProvider = new firebase.auth.GoogleAuthProvider();
+// Optional: always show account picker
+googleProvider.setCustomParameters({ prompt: "select_account" });
+
+// Simple status UI
+function updateSyncStatus() {
+  const el = document.getElementById("syncStatus");
+  if (!el || !auth.currentUser) return;
+  if (auth.currentUser.isAnonymous) {
+    el.textContent = "Not linked";
+    el.style.color = "var(--text-muted)";
+  } else {
+    el.textContent = "Linked";
+    el.style.color = "var(--green)";
+  }
+}
+
+/**
+ * IMPORTANT:
+ * - If you're anonymous (most likely on first use), LINK Google so you keep the same UID/data.
+ * - If you're already signed in, do nothing (or you could offer "switch account").
+ *
+ * We try popup first (best UX on desktop). If popup fails (often on iPhone), fallback to redirect.
+ */
+async function googleLinkOrSignIn() {
+  try {
+    if (!auth.currentUser) return;
+
+    if (auth.currentUser.isAnonymous) {
+      // Keep existing Firestore data: link Google to this anonymous user
+      try {
+        await auth.currentUser.linkWithPopup(googleProvider);
+      } catch (popupErr) {
+        // Mobile browsers often block popups; redirect is preferred there
+        await auth.currentUser.linkWithRedirect(googleProvider);
+      }
+    } else {
+      // Already linked/signed in; you could optionally sign out or show account info
+      alert("You're already linked on this device.");
+    }
+
+    updateSyncStatus();
+  } catch (e) {
+    console.error(e);
+    alert("Google sign-in failed. Check console for details.");
+  }
+}
+
+/**
+ * If redirect was used (common on iPhone), you MUST handle the redirect result on page load.
+ */
+async function handleGoogleRedirectResult() {
+  try {
+    const result = await auth.getRedirectResult();
+    if (result && result.user) {
+      // If we got here via redirect linking, the user is now linked/signed in.
+      updateSyncStatus();
+    }
+  } catch (e) {
+    console.error("Redirect result error:", e);
+  }
+}
+``  
 
 auth.signInAnonymously().catch(console.error);
 
