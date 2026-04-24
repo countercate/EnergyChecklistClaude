@@ -628,29 +628,39 @@ async function hasAnyCloudData() {
  * - Otherwise, sign in with Google (common for a new phone). [2](https://www.realsimple.com/healthy-habits-for-women-over-50-11914140)
  * - Redirect fallback is used when popups are blocked (often on iPhone). [4](https://menopause.org/press-releases/how-menopause-restructures-a-womans-brain)[3](https://drkathleenmahannah.com/blog/menopause-brain-health-lifestyle-supplements)
  */
+function isSafari() {
+  return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+}
+
 async function googleLinkOrSignIn() {
   if (!auth.currentUser) return;
 
   try {
-    const shouldLink = auth.currentUser.isAnonymous && (await hasAnyCloudData());
+    const shouldLink =
+      auth.currentUser.isAnonymous && (await hasAnyCloudData());
 
-    if (shouldLink) {
-      try {
-        await auth.currentUser.linkWithPopup(googleProvider);
-      } catch (popupErr) {
+    // ✅ Safari: ALWAYS use redirect (popup is unreliable)
+    if (isSafari()) {
+      if (shouldLink) {
         await auth.currentUser.linkWithRedirect(googleProvider);
-      }
-    } else {
-      try {
-        await auth.signInWithPopup(googleProvider);
-      } catch (popupErr) {
+      } else {
         await auth.signInWithRedirect(googleProvider);
       }
+      return;
+    }
+
+    // ✅ Non‑Safari browsers: popup is fine
+    if (shouldLink) {
+      await auth.currentUser.linkWithPopup(googleProvider);
+    } else {
+      await auth.signInWithPopup(googleProvider);
     }
   } catch (e) {
     console.error("Google sign-in/link failed:", e);
-    alert("Google sign-in failed. If this is a new device, try again and choose the same Google account you used on your computer.");
+    alert("Google sign-in failed. Please try again.");
   }
+}
+``
 }
 
 async function handleRedirectResult() {
