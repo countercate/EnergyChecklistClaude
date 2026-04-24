@@ -1082,18 +1082,20 @@ async function initApp() {
 
 // Boot sequence
 
+
 auth.onAuthStateChanged(async (user) => {
   if (user) {
     currentUser = user;
 
-    await handleRedirectResult();      // OK because this callback is async
-    currentUser = auth.currentUser;    // refresh after redirect
+    await handleRedirectResult();     // completes iOS redirect flow
+    currentUser = auth.currentUser;
 
     await initApp();
   } else {
     await auth.signInAnonymously();
   }
 });
+
 
 </script>
 
